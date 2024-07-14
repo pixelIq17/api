@@ -9,7 +9,11 @@ class Cliente extends Model
 {
     use HasFactory;
 
-    protected $table = 'Tabla_Clientes';
+    protected $table = 'clientes';
 
-    protected $fillable = ['Nombres_cliente','Apellidos_cliente'];
+    protected $fillable = ['Nombre', 'Apellido', 'Telefono', 'empleado_id'];
+    public function empleado()
+    {
+        return $this->belongsTo(Empleado::class);
+    }
 }

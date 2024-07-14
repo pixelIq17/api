@@ -9,7 +9,18 @@ class Auto extends Model
 {
     use HasFactory;
 
-    protected $table = 'Tabla_Autos';
+    protected $table = 'autos';
 
-    protected $fillable = ['Numero_placa','ID_modelo','ID_marca','Precio_auto'];
+    protected $fillable = ['Numero_placa', 'Modelo', 'Marca', 'Precio_auto', 'empleado_id'];
+
+    public function cliente()
+{
+    return $this->belongsTo(Cliente::class);
+}
+
+public function empleado()
+{
+    return $this->belongsTo(Empleado::class);
+}
+
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Empleados;
+use App\Models\Empleado;
 use Illuminate\Http\Request;
 
 class empleado_controller extends Controller
@@ -13,7 +13,7 @@ class empleado_controller extends Controller
      */
     public function index()
     {
-        $empleados = Empleados::all();
+        $empleados = Empleado::all();
         return response()->json($empleados);
     }
 
@@ -22,63 +22,77 @@ class empleado_controller extends Controller
      */
     public function store(Request $request)
     {
-        $empleados = new Empleados();
-        $empleados->DNI_empleado = $request->DNI_empleado;
-        $empleados->Nombres_empleado = $request->Nombres_empleado;
-        $empleados->Apellidos_empleado = $request->Apellidos_empleado;
-        $empleados->ID_cargo = $request->ID_cargo;
-        $empleados->save();
+        $request->validate([
+            'Codigo' => 'required|string',
+            'Nombre' => 'required|string',
+            'Apellido' => 'required|string',
+            'Cargo' => 'required|string',
+        ]);
+
+        $empleado = Empleado::create($request->all());
 
         return response()->json([
-            "message" => "Registro Agregado Correctamente!"
+            "message" => "Registro Agregado Correctamente!",
+            "empleado" => $empleado
         ]);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Empleados $empleados)
+    public function show($id)
     {
-        $empleados = Empleados::find($empleados);
-
-        if(!empty($empleados)) {
-            return response()->json($empleados);
-        }
-        else {
+        $empleado = Empleado::find($id);
+        if ($empleado) {
+            return response()->json($empleado);
+        } else {
             return response()->json([
                 "message" => "El Registro no se encuentra."
-            ]);
+            ], 404);
         }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Empleados $empleados)
+    public function update(Request $request, $id)
     {
-        $empleados = Empleados::find($empleados);
-
-        $empleados->DNI_empleado = $request->DNI_empleado;
-        $empleados->Nombres_empleado = $request->Nombres_empleado;
-        $empleados->Apellidos_empleado = $request->Apellidos_empleado;
-        $empleados->ID_cargo = $request->ID_cargo;
-        $empleados->save();
-
-        return response()->json([
-            "message" => "Registro Actualizado Correctamente!"
+        $request->validate([
+            'Codigo' => 'required|string',
+            'Nombre' => 'required|string',
+            'Apellido' => 'required|string',
+            'Cargo' => 'required|string',
         ]);
+
+        $empleado = Empleado::find($id);
+        if ($empleado) {
+            $empleado->update($request->all());
+            return response()->json([
+                "message" => "Registro Actualizado Correctamente!",
+                "empleado" => $empleado
+            ]);
+        } else {
+            return response()->json([
+                "message" => "El Registro no se encuentra."
+            ], 404);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Empleados $empleados)
+    public function destroy($id)
     {
-        $empleados = Empleados::find($empleados);
-        $empleados->delete();
-
-        return response()->json([
-            "message" => "Registro Eliminado Correctamente!"
-        ]);
+        $empleado = Empleado::find($id);
+        if ($empleado) {
+            $empleado->delete();
+            return response()->json([
+                "message" => "Registro Eliminado Correctamente!"
+            ]);
+        } else {
+            return response()->json([
+                "message" => "El Registro no se encuentra."
+            ], 404);
+        }
     }
 }
